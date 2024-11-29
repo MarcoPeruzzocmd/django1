@@ -12,9 +12,6 @@ router.register(r"editoras", EditoraViewSet)
 router.register(r"autoras", AutorViewSet)
 router.register(r"livros", LivroViewSet)
 
-
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(router.urls)),
