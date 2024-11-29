@@ -36,4 +36,6 @@ class Livro(models.Model):
     editora = models.ForeignKey(Editora, on_delete=models.PROTECT, related_name="livros")
     def __str__(self):
         return f"{self.titulo} ({self.quantidade})"
+    autores = models.ManyToManyField(Autor, related_name="livros")
+
 # Create your models here.
