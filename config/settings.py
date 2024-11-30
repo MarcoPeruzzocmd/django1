@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 """
 Django settings for config project.
 
@@ -25,9 +29,22 @@ SECRET_KEY = 'django-insecure-tj63&o_&&3&bcxa5=5ppbkxzbtp#@7j@(kaw4p1fy*ao+eetk4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+MODE = os.getenv("MODE")
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG", "False")
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000", "http://localhost:8000", "https://*.fl0.io/"]
+
+if MODE in ["PRODUCTION", "MIGRATE"]:
+    MEDIA_URL = '/media/'
+else:
+    MY_IP = os.getenv("MY_IP", "127.0.0.1")
+    MEDIA_URL = f"http://{MY_IP}:19003/media/"
+
 ALLOWED_HOSTS = []
 
-
+AUTH_USER_MODEL = "usuario.Usuario"
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,8 +56,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "livraria",
+    "usuario",
+    "uploader",
     "corsheaders",
     "rest_framework_simplejwt",
+    "drf_spectacular",
+
 
 ]
 
@@ -51,7 +72,16 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Livraria API",
+    "DESCRIPTION": "API para gerenciamento de livraria, incluindo endpoints e documentação.",
+    "VERSION": "1.0.0",
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -125,7 +155,10 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
+MEDIA_URL = "http://localhost:8000/media/"
+MEDIA_ENDPOINT = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+FILE_UPLOAD_PERMISSIONS = 0o640
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
